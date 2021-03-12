@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator issetów</title>
+</head>
+<body>
+    <textarea placeholder="Wklej tu swój formularz" style="width: 500px; height: 500px;"></textarea>
+    <br>
+    <button onclick="form_gen(document.getElementsByTagName('textarea')[0].value)">Generuj</button><br>
+    <div id="wynik"></div>
+    <script>
+    function form_gen(html){
+        var html = html;
+        console.log(html);
+        var ret = "";
+        var variables= "";
+        var regex = /name="/gi, wynik, indeksy = [];
+        while ( (wynik = regex.exec(html)) ) {
+            indeksy.push(wynik.index+6);
+        }
+        indeksy.forEach(element => {
+            var is_required = 0;
+            var str ='';
+            var wynik_req1 = 0;
+            for(var i=element, i_old = i;i<html.length;i++){
+                if(html[i]!=">"){
+                    if(html[i]=="r"){
+                        var wynik_req = 0;
+                        for(var o=1;o<7;o++){
+                            switch(o){
+                                case 1:
+                                    if(html[i+0-1]=="e")wynik_req+=1;break;
+                                case 2:
+                                    if(html[i+0-1]=="q")wynik_req+=1;break;
+                                case 3:
+                                    if(html[i+0-1]=="u")wynik_req+=1;break;
+                                case 4:
+                                    if(html[i+0-1]=="i")wynik_req+=1;break;
+                                case 5:
+                                    if(html[i+0-1]=="r")wynik_req+=1;break;
+                                case 6:
+                                    if(html[i+0-1]=="e")wynik_req+=1;break;
+                                case 7:
+                                    if(html[i+0-1]=="d")wynik_req+=1;break;
+                            }
+                        }
+                        console.log(wynik_req);
+                        if(wynik_req>2){
+                            wynik_req1=wynik_req;
+                        }
+                        
+                    }
+                }
+            }
+            for(var i=0;i<html.length-element;i++){
+                if(html[element+i]!='"' && html[element+i]!="'"){
+                    str+=html[element+i];
+                }else{
+                    break;
+                }
+            }
+            if(str!=''){
+                var nstr = '';
+                console.log(str);
+                for(var i=0;i<str.length - 1;i++) nstr+=str[i];
+                console.log(wynik_req1);
+                var ss= wynik_req1>2?`$_SESSION["${str}"]!="" &&`:"";
+                ret+=`isset($_SESSION["${str}"]) && `+ss;
+                variables+=`$${str} = $_SESSION["${str}"];<br>`;
+                
+            }
+            
+        });
+        console.log(ret);
+        ret = ret.substring(0,ret.length-4);
+        console.log(ret);   
+        document.getElementById("wynik").innerHTML= `if(${ret}){<br>${variables}}`;
+    }
+
+
+    </script>
+</body>
+</html>
